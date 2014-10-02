@@ -10,4 +10,4 @@ install:
   - go get github.com/mattn/goveralls
 script:
   - make test
-  - $HOME/gopath/bin/goveralls -repotoken lukb7xZRqeW17jjgg2BhWwGd6Kz4SMFZm
+  - $HOME/gopath/bin/goveralls -repotoken kTa5AZCg5teNjz64kBUI4S4gvVU7PuCaj
