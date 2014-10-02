@@ -1,0 +1,13 @@
+language: go
+go:
+  - 1.2
+  - 1.3
+  - tip
+install:
+  - make install-deps
+  - go get code.google.com/p/go.tools/cmd/cover
+  - go get github.com/axw/gocov/gocov
+  - go get github.com/mattn/goveralls
+script:
+  - make test
+  - $HOME/gopath/bin/goveralls -repotoken lukb7xZRqeW17jjgg2BhWwGd6Kz4SMFZm ./cli
