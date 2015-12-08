@@ -1,8 +1,10 @@
 package tint
 
-import "fmt"
-import "strings"
-import "strconv"
+import (
+	"fmt"
+	"strconv"
+	"strings"
+)
 
 // Style is the struct that holds information on how to style a string
 type Style struct {
