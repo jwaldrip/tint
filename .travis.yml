@@ -4,11 +4,12 @@ go:
   - 1.4
   - 1.5
   - tip
+
 install:
-  - make install-deps
   - go get code.google.com/p/go.tools/cmd/cover
   - go get github.com/axw/gocov/gocov
   - go get github.com/mattn/goveralls
+
 script:
   - make test
   - $HOME/gopath/bin/goveralls -repotoken kTa5AZCg5teNjz64kBUI4S4gvVU7PuCaj
