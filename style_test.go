@@ -2,261 +2,142 @@ package tint_test
 
 import (
 	"fmt"
+	"strings"
+	"testing"
 
-	. "github.com/jwaldrip/tint"
-
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
+	"github.com/jwaldrip/tint"
 )
 
-var _ = Describe("Style", func() {
+var (
+	input string = "*****"
+)
 
-	var style *Style
+func TestRenderColors(t *testing.T) {
+	var tests = []struct {
+		containsColor string
+		color         int
+		colorStr      string
+	}{
+		{"*****", -1, "unformatted"},
+		{"30m", tint.Black, "black"},
+		{"31m", tint.Red, "red"},
+		{"32m", tint.Green, "green"},
+		{"33m", tint.Yellow, "yellow"},
+		{"34m", tint.Blue, "blue"},
+		{"35m", tint.Magenta, "magenta"},
+		{"36m", tint.Cyan, "cyan"},
+		{"37m", tint.LightGrey, "light grey"},
+		{"90m", tint.LightBlack, "light black"},
+		{"91m", tint.LightRed, "light red"},
+		{"92m", tint.LightGreen, "light green"},
+		{"93m", tint.LightYellow, "light yellow"},
+		{"94m", tint.LightBlue, "light blue"},
+		{"95m", tint.LightMagenta, "light magenta"},
+		{"96m", tint.LightCyan, "light cyan"},
+		{"97m", tint.White, "white"},
+	}
+	for _, test := range tests {
+		style := &tint.Style{}
+		if test.color != -1 {
+			style.Color = test.color
+		}
+		output := style.Render(input)
+		if !strings.Contains(output, test.containsColor) {
+			fail := fmt.Sprintf("it should render the color %s", test.colorStr)
+			t.Error(fail)
+		}
+		if !strings.Contains(output, input) {
+			t.Error("it should contain the orignal string")
+		}
+	}
 
-	BeforeEach(func() {
-		style = &Style{}
-	})
+}
 
-	AfterEach(func() {
-		fmt.Print(style.Render("#"))
-	})
+func TestStyleBackgrounds(t *testing.T) {
+	var tests = []struct {
+		containsColor string
+		color         int
+		colorStr      string
+	}{
+		{"40m", tint.Black, "black"},
+		{"41m", tint.Red, "red"},
+		{"42m", tint.Green, "green"},
+		{"43m", tint.Yellow, "yellow"},
+		{"44m", tint.Blue, "blue"},
+		{"45m", tint.Magenta, "magenta"},
+		{"46m", tint.Cyan, "cyan"},
+		{"47m", tint.LightGrey, "light grey"},
+		{"100m", tint.LightBlack, "light black"},
+		{"101m", tint.LightRed, "light red"},
+		{"102m", tint.LightGreen, "light green"},
+		{"103m", tint.LightYellow, "light yellow"},
+		{"104m", tint.LightBlue, "light blue"},
+		{"105m", tint.LightMagenta, "light magenta"},
+		{"106m", tint.LightCyan, "light cyan"},
+		{"107m", tint.White, "white"},
+	}
+	for _, test := range tests {
+		style := &tint.Style{}
+		style.Background = test.color
+		output := style.Render(input)
+		if !strings.Contains(output, test.containsColor) {
+			fail := fmt.Sprintf("it should render the background color %s", test.colorStr)
+			t.Error(fail)
+		}
+		if !strings.Contains(output, input) {
+			t.Error("it should contain the orignal string")
+		}
+	}
+}
 
-	Describe("Render", func() {
-		It("should render unformated", func() {
-			output := style.Render("*****")
-			Expect(output).To(Equal("*****"))
-		})
+func TestStyleBold(t *testing.T) {
+	style := &tint.Style{
+		Bold: true,
+	}
+	output := style.Render(input)
+	if !strings.Contains(output, input) {
+		t.Error("it should contain the orignal string")
+	}
+	if !strings.Contains(output, "1m") {
+		t.Error("it should have rendered the text as bold")
+	}
+}
 
-		Context("colors", func() {
-			It("should render Black", func() {
-				style.Color = Black
-				output := style.Render("*****")
-				Expect(output).To(ContainSubstring("30m"))
-			})
+func TestStyleDim(t *testing.T) {
+	style := &tint.Style{
+		Dim: true,
+	}
+	output := style.Render(input)
+	if !strings.Contains(output, input) {
+		t.Error("it should contain the orignal string")
+	}
+	if !strings.Contains(output, "2m") {
+		t.Error("it should have rendered the text as dim")
+	}
+}
 
-			It("should render Red", func() {
-				style.Color = Red
-				output := style.Render("*****")
-				Expect(output).To(ContainSubstring("31m"))
-			})
+func TestStyleUnderline(t *testing.T) {
+	style := &tint.Style{
+		Underline: true,
+	}
+	output := style.Render(input)
+	if !strings.Contains(output, input) {
+		t.Error("it should contain the orignal string")
+	}
+	if !strings.Contains(output, "4m") {
+		t.Error("it should have rendered the text with an underline")
+	}
+}
 
-			It("should render Green", func() {
-				style.Color = Green
-				output := style.Render("*****")
-				Expect(output).To(ContainSubstring("32"))
-			})
-
-			It("should render Yellow", func() {
-				style.Color = Yellow
-				output := style.Render("*****")
-				Expect(output).To(ContainSubstring("33m"))
-			})
-
-			It("should render Blue", func() {
-				style.Color = Blue
-				output := style.Render("*****")
-				Expect(output).To(ContainSubstring("34m"))
-			})
-
-			It("should render Magenta", func() {
-				style.Color = Magenta
-				output := style.Render("*****")
-				Expect(output).To(ContainSubstring("35m"))
-			})
-
-			It("should render Cyan", func() {
-				style.Color = Cyan
-				output := style.Render("*****")
-				Expect(output).To(ContainSubstring("36m"))
-			})
-
-			It("should render LightGrey", func() {
-				style.Color = LightGrey
-				output := style.Render("*****")
-				Expect(output).To(ContainSubstring("37m"))
-			})
-
-			It("should render LightBlack", func() {
-				style.Color = LightBlack
-				output := style.Render("*****")
-				Expect(output).To(ContainSubstring("90m"))
-			})
-
-			It("should render LightRed", func() {
-				style.Color = LightRed
-				output := style.Render("*****")
-				Expect(output).To(ContainSubstring("91m"))
-			})
-
-			It("should render LightGreen", func() {
-				style.Color = LightGreen
-				output := style.Render("*****")
-				Expect(output).To(ContainSubstring("92m"))
-			})
-
-			It("should render LightYellow", func() {
-				style.Color = LightYellow
-				output := style.Render("*****")
-				Expect(output).To(ContainSubstring("93m"))
-			})
-
-			It("should render LightBlue", func() {
-				style.Color = LightBlue
-				output := style.Render("*****")
-				Expect(output).To(ContainSubstring("94m"))
-			})
-
-			It("should render LightMagenta", func() {
-				style.Color = LightMagenta
-				output := style.Render("*****")
-				Expect(output).To(ContainSubstring("95m"))
-			})
-
-			It("should render LightCyan", func() {
-				style.Color = LightCyan
-				output := style.Render("*****")
-				Expect(output).To(ContainSubstring("96m"))
-			})
-
-			It("should render White", func() {
-				style.Color = White
-				output := style.Render("*****")
-				Expect(output).To(ContainSubstring("97m"))
-			})
-
-		})
-
-		Context("backgrounds", func() {
-			It("should render Black", func() {
-				style.Background = Black
-				output := style.Render("*****")
-				Expect(output).To(ContainSubstring("40m"))
-			})
-
-			It("should render Red", func() {
-				style.Background = Red
-				output := style.Render("*****")
-				Expect(output).To(ContainSubstring("41m"))
-			})
-
-			It("should render Green", func() {
-				style.Background = Green
-				output := style.Render("*****")
-				Expect(output).To(ContainSubstring("42m"))
-			})
-
-			It("should render Yellow", func() {
-				style.Background = Yellow
-				output := style.Render("*****")
-				Expect(output).To(ContainSubstring("43m"))
-			})
-
-			It("should render Blue", func() {
-				style.Background = Blue
-				output := style.Render("*****")
-				Expect(output).To(ContainSubstring("44m"))
-			})
-
-			It("should render Magenta", func() {
-				style.Background = Magenta
-				output := style.Render("*****")
-				Expect(output).To(ContainSubstring("45m"))
-			})
-
-			It("should render Cyan", func() {
-				style.Background = Cyan
-				output := style.Render("*****")
-				Expect(output).To(ContainSubstring("46m"))
-			})
-
-			It("should render LightGrey", func() {
-				style.Background = LightGrey
-				output := style.Render("*****")
-				Expect(output).To(ContainSubstring("47m"))
-			})
-
-			It("should render LightBlack", func() {
-				style.Background = LightBlack
-				output := style.Render("*****")
-				Expect(output).To(ContainSubstring("100m"))
-			})
-
-			It("should render LightRed", func() {
-				style.Background = LightRed
-				output := style.Render("*****")
-				Expect(output).To(ContainSubstring("101m"))
-			})
-
-			It("should render LightGreen", func() {
-				style.Background = LightGreen
-				output := style.Render("*****")
-				Expect(output).To(ContainSubstring("102m"))
-			})
-
-			It("should render LightYellow", func() {
-				style.Background = LightYellow
-				output := style.Render("*****")
-				Expect(output).To(ContainSubstring("103m"))
-			})
-
-			It("should render LightBlue", func() {
-				style.Background = LightBlue
-				output := style.Render("*****")
-				Expect(output).To(ContainSubstring("104m"))
-			})
-
-			It("should render LightMagenta", func() {
-				style.Background = LightMagenta
-				output := style.Render("*****")
-				Expect(output).To(ContainSubstring("105m"))
-			})
-
-			It("should render LightCyan", func() {
-				style.Background = LightCyan
-				output := style.Render("*****")
-				Expect(output).To(ContainSubstring("106m"))
-			})
-
-			It("should render White", func() {
-				style.Background = White
-				output := style.Render("*****")
-				Expect(output).To(ContainSubstring("107m"))
-			})
-
-		})
-
-		Context("bold", func() {
-			It("should render boldly", func() {
-				style.Bold = true
-				output := style.Render("*****")
-				Expect(output).To(ContainSubstring("1m"))
-			})
-		})
-
-		Context("dim", func() {
-			It("should render dimly", func() {
-				style.Dim = true
-				output := style.Render("*****")
-				Expect(output).To(ContainSubstring("2m"))
-			})
-		})
-
-		Context("underline", func() {
-			It("should render underline", func() {
-				style.Underline = true
-				output := style.Render("*****")
-				Expect(output).To(ContainSubstring("4m"))
-			})
-		})
-
-		Context("blink", func() {
-			It("should render underline", func() {
-				style.Blink = true
-				output := style.Render("*****")
-				Expect(output).To(ContainSubstring("5m"))
-			})
-		})
-
-	})
-
-})
+func TestStyleBlink(t *testing.T) {
+	style := &tint.Style{
+		Blink: true,
+	}
+	output := style.Render(input)
+	if !strings.Contains(output, input) {
+		t.Error("it should contain the orignal string")
+	}
+	if !strings.Contains(output, "5m") {
+		t.Error("it should have rendered the text blinking")
+	}
+}
