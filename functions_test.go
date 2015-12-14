@@ -1,44 +1,31 @@
 package tint_test
 
 import (
-	"fmt"
+	"strings"
+	"testing"
 
-	. "github.com/jwaldrip/tint"
-
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
+	"github.com/jwaldrip/tint"
 )
 
 var output string
 
-var _ = Describe("functions", func() {
+func TestStylize(t *testing.T) {
+	output := tint.Stylize("#", tint.Style{Color: tint.Blue, Underline: true})
+	if !strings.Contains(output, "4;34m") {
+		t.Error("It should have colored the string blue with an underline.")
+	}
+}
 
-	BeforeEach(func() {
-		output = ""
-	})
+func TestColorize(t *testing.T) {
+	output := tint.Colorize("#", tint.Blue)
+	if !strings.Contains(output, "34m") {
+		t.Error("It should have colored the string blue.")
+	}
+}
 
-	AfterEach(func() {
-		fmt.Print(output)
-	})
-
-	Describe("Stylize", func() {
-		It("should stylize a string", func() {
-			output = Stylize("#", Style{Color: Blue, Underline: true})
-			Expect(output).To(ContainSubstring("4;34m"))
-		})
-	})
-
-	Describe("Colorize", func() {
-		It("should colorize a string", func() {
-			output = Colorize("#", Blue)
-			Expect(output).To(ContainSubstring("34m"))
-		})
-	})
-
-	Describe("ColorizeBackground", func() {
-		It("should colorize a background of a string", func() {
-			output = ColorizeBackground("#", Blue)
-			Expect(output).To(ContainSubstring("44m"))
-		})
-	})
-})
+func TestColorizeBackground(t *testing.T) {
+	output := tint.ColorizeBackground("#", tint.Blue)
+	if !strings.Contains(output, "44m") {
+		t.Error("It should have given the string a blue background.")
+	}
+}

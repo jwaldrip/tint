@@ -1,10 +1,12 @@
-test: install-deps
-	@clear
-	go test
+default: build
 
-install-deps:
-	go get github.com/onsi/ginkgo
-	go get github.com/onsi/gomega
+build:
+	go build .
 
-install: install-deps
-	go install
+install:
+	go install .
+
+test:
+	go test -v ./...
+
+.PHONY: build install test
