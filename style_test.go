@@ -90,6 +90,34 @@ func TestStyleBackgrounds(t *testing.T) {
 	}
 }
 
+func TestStyle256Colors(t *testing.T) {
+	style := &tint.Style{
+		Use256: true,
+		Color:  tint.Blue,
+	}
+	output := style.Render(input)
+	if !strings.Contains(output, input) {
+		t.Error("it should contain the orignal string")
+	}
+	if !strings.Contains(output, "48;5") {
+		t.Error("it should have rendered the text as bold")
+	}
+}
+
+func TestStyleInverted(t *testing.T) {
+	style := &tint.Style{
+		Color:    tint.Blue,
+		Inverted: true,
+	}
+	output := style.Render(input)
+	if !strings.Contains(output, input) {
+		t.Error("it should contain the orignal string")
+	}
+	if !strings.Contains(output, "6") {
+		t.Error("it should have rendered the text as bold")
+	}
+}
+
 func TestStyleBold(t *testing.T) {
 	style := &tint.Style{
 		Bold: true,
